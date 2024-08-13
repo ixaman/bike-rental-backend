@@ -1,32 +1,56 @@
 import { model, Schema } from 'mongoose';
-import { TUser } from './user.interface';
+import { TUser, UserModel } from './user.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
-const userSchema = new Schema<TUser>({
-  name: {
-    type: String,
-    required: true,
+const userSchema = new Schema<TUser, UserModel>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ['admin', 'user'],
+      required: true,
+    },
   },
-  email: {
-    type: String,
-    required: true,
+  {
+    timestamps: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: ['admin', 'user'],
-    required: true,
-  },
+);
+
+userSchema.statics.isUserExist = async function (email) {
+  const existingUser = await User.findOne({ email });
+
+  return existingUser;
+};
+
+//document middleware pre before save
+
+userSchema.pre('save', async function (next) {
+  this.password = await bcrypt.hashSync(
+    this.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
 });
 
-export const User = model<TUser>('User', userSchema);
+export const User = model<TUser, UserModel>('User', userSchema);
