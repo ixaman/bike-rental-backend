@@ -7,15 +7,27 @@ const signUpUser = catchAsync(async (req, res) => {
 
   const result = await AuthServices.handleSignUpUser(userData);
 
-  res.status(httpStatus.OK).json({
+  res.status(httpStatus.CREATED).json({
     success: true,
-    statusCode: httpStatus.OK,
+    statusCode: httpStatus.CREATED,
     message: 'User registered successfully',
     data: result,
   });
 });
 
-const loginUser = catchAsync(async (req, res) => {});
+const loginUser = catchAsync(async (req, res) => {
+  const result = await AuthServices.handleLoginUser(req.body);
+
+  const { accessToken, user } = result;
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User logged in successfully',
+    token: accessToken,
+    data: user,
+  });
+});
 
 export const AuthController = {
   signUpUser,
