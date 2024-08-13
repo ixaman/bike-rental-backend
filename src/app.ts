@@ -2,6 +2,7 @@ import { Application, Request, Response } from 'express';
 import express from 'express';
 import cors from 'cors';
 import httpStatus from 'http-status';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
 
 const app: Application = express();
 
@@ -17,5 +18,8 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Welcome to Assignment-03 : Bike Rental Service API',
   });
 });
+
+//global error handler
+app.use(globalErrorHandler);
 
 export default app;
