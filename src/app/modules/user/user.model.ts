@@ -17,6 +17,7 @@ const userSchema = new Schema<TUser, UserModel>(
     password: {
       type: String,
       required: true,
+      select: 0,
     },
     phone: {
       type: String,
@@ -39,7 +40,7 @@ const userSchema = new Schema<TUser, UserModel>(
 
 //statics method to check if the user is exist
 userSchema.statics.isUserExist = async function (email) {
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email }).select('+password');
 
   return existingUser;
 };
@@ -58,6 +59,23 @@ userSchema.pre('save', async function (next) {
     this.password,
     Number(config.bcrypt_salt_round),
   );
+  next();
+});
+
+// Middleware to hash password before saving or updating
+userSchema.pre('findOneAndUpdate', async function (next) {
+  // Get the update object
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const update = this.getUpdate() as any;
+
+  // Check if the password is being updated
+  if (update.password) {
+    update.password = await bcrypt.hashSync(
+      update.password,
+      Number(config.bcrypt_salt_round),
+    );
+  }
+
   next();
 });
 

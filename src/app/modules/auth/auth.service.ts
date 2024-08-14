@@ -13,6 +13,8 @@ const handleSignUpUser = async (payload: TUser) => {
 
   const result = await User.create(payload);
 
+  result.password = undefined!;
+
   return result;
 };
 
@@ -41,9 +43,18 @@ const handleLoginUser = async (payload: TLogin) => {
     config.jwt_access_expires_in as string,
   );
 
+  const userWithoutPassword = {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    address: user.address,
+    role: user.role,
+  };
+
   return {
     accessToken,
-    user,
+    userWithoutPassword,
   };
 };
 
