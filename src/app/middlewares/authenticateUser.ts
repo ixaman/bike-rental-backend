@@ -12,7 +12,10 @@ const authenticateUser = (...requiredRoles: TUserRole[]) => {
 
     //checking if the token is provided or not
     if (!token) {
-      throw new CustomError(httpStatus.UNAUTHORIZED, 'Token not found!');
+      throw new CustomError(
+        httpStatus.UNAUTHORIZED,
+        'Youu are not Authorized!',
+      );
     }
 
     //checking if the token is valid
