@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { Model } from 'mongoose';
+import { USER_ROLE } from './user.constants';
+
+export type TUserRole = keyof typeof USER_ROLE;
 
 export type TUser = {
   name: string;
@@ -7,7 +10,7 @@ export type TUser = {
   password: string;
   phone: string;
   address: string;
-  role: 'admin' | 'user';
+  role: TUserRole;
 };
 
 export interface UserModel extends Model<TUser> {
