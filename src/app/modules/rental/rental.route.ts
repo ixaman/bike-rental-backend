@@ -20,4 +20,10 @@ router.put(
   RentalController.returnBike,
 );
 
+router.get(
+  '/',
+  authenticateUser(USER_ROLE.user),
+  RentalController.getMyRentals,
+);
+
 export const RentalRoutes = router;

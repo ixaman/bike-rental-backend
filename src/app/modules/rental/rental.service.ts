@@ -130,7 +130,27 @@ const handleReturnBike = async (rentalId: string) => {
   }
 };
 
+const handleGetMyRentals = async (token: JwtPayload) => {
+  const user = await User.isUserExist(token.userEmail);
+
+  if (!user) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'User not found!');
+  }
+
+  const rentals = await Rental.find({ userId: user._id });
+
+  if (!rentals) {
+    throw new CustomError(
+      httpStatus.NOT_FOUND,
+      'No rentals found for the user!',
+    );
+  }
+
+  return rentals;
+};
+
 export const RentalService = {
   handleCreateRental,
   handleReturnBike,
+  handleGetMyRentals,
 };
