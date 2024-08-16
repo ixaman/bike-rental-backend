@@ -30,7 +30,7 @@ const authenticateUser = (...requiredRoles: TUserRole[]) => {
     const user = await User.isUserExist(userEmail);
 
     if (!user) {
-      throw new CustomError(httpStatus.NOT_FOUND, 'This user is not found !');
+      throw new CustomError(httpStatus.NOT_FOUND, 'User not found !');
     }
 
     //checking if the roles matched

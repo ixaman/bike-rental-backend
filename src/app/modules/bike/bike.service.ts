@@ -18,7 +18,6 @@ const handleGetAllBikes = async () => {
 const handleUpdateBikeWithId = async (id: string, payload: Partial<TBike>) => {
   //checking if bike exist
   const bike = await Bike.isBikeExist(id);
-  console.log(bike);
 
   if (!bike) {
     throw new CustomError(httpStatus.NOT_FOUND, 'Bike not found!');

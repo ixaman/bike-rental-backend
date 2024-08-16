@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 
-export type TBooking = {
+export type TRental = {
   userId: Types.ObjectId;
   bikeId: Types.ObjectId;
-  startTime: Date;
-  returnTime: Date;
+  startTime: string;
+  returnTime: string;
   totalCost: number;
   isReturned: boolean;
 };
