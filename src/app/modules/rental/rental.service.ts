@@ -62,6 +62,75 @@ const handleCreateRental = async (token: JwtPayload, payload: TRental) => {
   }
 };
 
+const handleReturnBike = async (rentalId: string) => {
+  const rental = await Rental.findById(rentalId);
+
+  if (!rental) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Rental not found!');
+  }
+
+  const { bikeId, startTime } = rental;
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const startedTime = new Date(startTime);
+    const returnedTime = new Date();
+
+    const diffsInMs: number = returnedTime.getTime() - startedTime.getTime();
+
+    const totalHours: number = Math.round(diffsInMs / (1000 * 60 * 60));
+
+    const totalCost = totalHours * 15;
+
+    //transaction-1 : update the rental
+    const updatedRental = await Rental.findByIdAndUpdate(
+      rentalId,
+      {
+        returnTime: returnedTime.toISOString(),
+        totalCost,
+        isReturned: true,
+      },
+      {
+        new: true,
+        session,
+      },
+    );
+
+    if (!updatedRental) {
+      throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to return bike');
+    }
+
+    //transaction-2: update the bike
+    const updatedBike = await Bike.findByIdAndUpdate(
+      bikeId,
+      { isAvailable: true },
+      {
+        new: true,
+        session,
+      },
+    );
+
+    if (!updatedBike) {
+      throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to update bike');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return updatedRental;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
+  }
+};
+
 export const RentalService = {
   handleCreateRental,
+  handleReturnBike,
 };

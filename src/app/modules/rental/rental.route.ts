@@ -14,4 +14,10 @@ router.post(
   RentalController.createRental,
 );
 
+router.put(
+  '/:id/return',
+  authenticateUser(USER_ROLE.admin),
+  RentalController.returnBike,
+);
+
 export const RentalRoutes = router;
