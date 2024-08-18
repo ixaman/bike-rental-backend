@@ -30,12 +30,22 @@ const authenticateUser = (...requiredRoles: TUserRole[]) => {
     const user = await User.isUserExist(userEmail);
 
     if (!user) {
-      throw new CustomError(httpStatus.NOT_FOUND, 'User not found !');
+      throw new CustomError(httpStatus.NOT_FOUND, 'No Data Found');
     }
 
     //checking if the roles matched
     if (requiredRoles && !requiredRoles.includes(role)) {
-      throw new CustomError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+      throw new CustomError(
+        httpStatus.UNAUTHORIZED,
+        'You have no access to this route',
+      );
+    }
+
+    if (user.role !== role || user.email !== userEmail) {
+      throw new CustomError(
+        httpStatus.UNAUTHORIZED,
+        'You have no access to this route',
+      );
     }
 
     req.user = decoded as JwtPayload & { userEmail: string; role: string };

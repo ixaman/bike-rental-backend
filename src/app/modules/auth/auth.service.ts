@@ -5,11 +5,11 @@ import { createToken } from './auth.utils';
 import config from '../../config';
 
 const handleSignUpUser = async (payload: TUser) => {
-  const existingUser = await User.isUserExist(payload.email);
+  // const existingUser = await User.isUserExist(payload.email);
 
-  if (existingUser) {
-    throw new Error('User already exists!');
-  }
+  // if (existingUser) {
+  //   throw new Error('User already exists!');
+  // }
 
   const result = await User.create(payload);
 
