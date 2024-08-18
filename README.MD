@@ -24,7 +24,7 @@ Check out the live version of this project [here](google.com)
 - **ODM**: Mongoose
 - **Validation Library**: Zod
 - **Database**: MongoDB
-- **Security**: jwt
+- **Authentication**: Jwt
 
 ## 📦 Project Setup
 
