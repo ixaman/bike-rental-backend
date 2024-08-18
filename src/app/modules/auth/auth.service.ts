@@ -3,13 +3,19 @@ import { User } from '../user/user.model';
 import { TLogin } from './auth.interface';
 import { createToken } from './auth.utils';
 import config from '../../config';
+import CustomError from '../../errors/CustomError';
+import httpStatus from 'http-status';
 
 const handleSignUpUser = async (payload: TUser) => {
-  // const existingUser = await User.isUserExist(payload.email);
+  // checking if user already exist
+  const existingUser = await User.isUserExist(payload.email);
 
-  // if (existingUser) {
-  //   throw new Error('User already exists!');
-  // }
+  if (existingUser) {
+    throw new CustomError(
+      httpStatus.BAD_REQUEST,
+      `Duplicate Entry: '${payload.email}' is already exist!`,
+    );
+  }
 
   const result = await User.create(payload);
 
@@ -23,7 +29,7 @@ const handleLoginUser = async (payload: TLogin) => {
   const user = await User.isUserExist(payload.email);
 
   if (!user) {
-    throw new Error('User not found!');
+    throw new CustomError(httpStatus.NOT_FOUND, 'No Data Found');
   }
 
   //check if the password is matched

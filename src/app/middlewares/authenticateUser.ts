@@ -16,7 +16,7 @@ const authenticateUser = (...requiredRoles: TUserRole[]) => {
     if (!token) {
       throw new CustomError(
         httpStatus.UNAUTHORIZED,
-        'Youu are not Authorized!',
+        'You have no access to this route',
       );
     }
 

@@ -5,6 +5,7 @@ const bikeSchema = new Schema<TBike, BikeModel>(
   {
     name: {
       type: String,
+      unique: true,
       required: true,
     },
     description: {

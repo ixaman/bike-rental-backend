@@ -14,7 +14,7 @@ const handleCreateRental = async (token: JwtPayload, payload: TRental) => {
   const bike = await Bike.isBikeExist(bikeIdString);
 
   if (!bike) {
-    throw new CustomError(httpStatus.NOT_FOUND, 'Bike is not found!');
+    throw new CustomError(httpStatus.NOT_FOUND, 'No Data Found');
   }
   if (bike.isAvailable === false) {
     throw new CustomError(httpStatus.BAD_REQUEST, 'Bike is not available!');
@@ -71,6 +71,13 @@ const handleReturnBike = async (rentalId: string) => {
 
   const { bikeId, startTime } = rental;
 
+  const bike = await Bike.isBikeExist(bikeId.toString());
+  let pricePerHour: number = 0;
+
+  if (bike) {
+    pricePerHour = bike.pricePerHour;
+  }
+
   const session = await mongoose.startSession();
 
   try {
@@ -83,7 +90,7 @@ const handleReturnBike = async (rentalId: string) => {
 
     const totalHours: number = Math.round(diffsInMs / (1000 * 60 * 60));
 
-    const totalCost = totalHours * 15;
+    const totalCost = totalHours * pricePerHour;
 
     //transaction-1 : update the rental
     const updatedRental = await Rental.findByIdAndUpdate(
