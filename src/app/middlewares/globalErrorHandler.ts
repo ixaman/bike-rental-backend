@@ -54,7 +54,7 @@ const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
     ];
   }
 
-  //sending final error response
+  //sending final error responses
   if (message === 'No Data Found') {
     res.status(statusCode).json({
       success: false,

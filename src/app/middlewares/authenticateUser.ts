@@ -8,7 +8,9 @@ import { User } from '../modules/user/user.model';
 
 const authenticateUser = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req, res, next) => {
-    const token = req.headers.authorization;
+    //extracting token from bearer
+    const bearer = req.header('Authorization') || '';
+    const token = bearer.split(' ')[1];
 
     //checking if the token is provided or not
     if (!token) {
